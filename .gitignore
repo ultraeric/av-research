@@ -1,0 +1,14 @@
+## General (from caffe .gitignore)
+*.log
+*.pyc
+*.swp
+# PyCharm files
+.idea
+
+# OSX dir files
+.DS_Store
+*.weights*
+*.infer*
+#
+#########################################################
+save/

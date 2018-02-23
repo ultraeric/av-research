@@ -1,0 +1,41 @@
+{
+  "parentConfig": "",
+  "logging": {
+    "dirPath": "./logs",
+    "verbose": false
+  },
+
+  "training": {
+    "startEpoch": 71,
+    "numEpochs": 150,
+    "learningRate": null,
+    "seed": 123123123,
+    "trainRatio": 0.8,
+    "subsampleRatio": 0.25,
+    "numWorkers": 3,
+    "batchSize": 24,
+    "tasks": {
+      "e2c": {
+        "frequency": 0.25
+      },
+      "e2e": {
+        "frequency": 1
+      }
+    }
+  },
+
+  "demo": {
+    "epoch": 27
+  },
+
+  "hardware": {
+    "useGpu": true,
+    "gpu": 0
+  },
+
+  "model": {
+    "name": "squeezefcn",
+    "pyPath": "nets.models.squeezefcn",
+    "saveDirPath": "./save/"
+  }
+}

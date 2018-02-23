@@ -1,0 +1,32 @@
+{
+  "parentConfig": "default.json",
+  "logging": {
+    "dirPath": "./logs",
+    "verbose": false
+  },
+
+  "training": {
+    "startEpoch": 0,
+    "numEpochs": 150,
+    "learningRate": null,
+    "seed": 123123123,
+    "trainRatio": 0.8,
+    "subsampleRatio": 0.25,
+    "numWorkers": 3,
+    "batchSize": 32
+  },
+
+  "demo": {
+    "epoch": 0
+  },
+
+  "hardware": {
+    "useGpu": true,
+    "gpu": 0
+  },
+
+  "model": {
+    "name": "test_squeezefcn",
+    "pyPath": "nets.active_testing.squeezefcn"
+  }
+}
