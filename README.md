@@ -1,3 +1,24 @@
+# Data Model
+Our API is intended to abstract out many of the redundant aspects of image/video based data representations in the AV space.
+Our data model is centered around `bricks`,  which are single data points that can be sampled. On top of bricks are 
+`beams`, which are collections of data points such as video. Finally, those are both encapsulated by `datasets`, which
+extend from the PyTorch Dataset class. These datasets do a lot of the redundant work such as sampling. 
+
+<h2>Bricks</h2>
+Each brick is a single video frame or series of video frames that are associated with a single "packet" of metadata or
+labels, such as steering angle, acceleration, etc. Below is the high-level API for `bricks`. 
+
+```
+class Brick:
+|- <constructor> __init__()
+|==============================
+|- <function> serialized()
+|   Returns a representation of this Brick as a Python dictionary. Keys will be converted to CamelCase
+|==============================
+|- <function> serialize()
+|   Returns a representation of this Brick as a string in JSON format.
+```
+
 # Workflow
 Explanation of directory structure:
 
