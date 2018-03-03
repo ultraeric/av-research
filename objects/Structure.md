@@ -12,8 +12,6 @@ The following is the structure for a beam:
 
   # File path information
   "filepath": "FILEPATH",
-  "sourcePath": "SOURCEPATH",
-  "sourceJsonPath": "SOURCEPATH",
   "hdf5Path": "PATH TO HDF5",
   "datasetId": "ID"
 

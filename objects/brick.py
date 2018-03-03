@@ -79,16 +79,37 @@ class Brick:
     @property
     @abstractmethod
     def valid(self) -> bool:
+        """
+        Returns whether this brick is valid or not.
+        :return:
+        """
         pass
 
     @abstractmethod
     def get_input(self):
+        """
+        Returns the input represented by this Brick as a Tensor. If using HDF5 to store video data, import session from
+        objects._session and use session.read_hdf5() to retrieve it. Override to get different inputs, such as different
+        metadata formats. Note that this vector will be grouped into batches and passed directly into the forward() function.
+        :return: Tensor
+        """
         pass
 
     @abstractmethod
     def get_metadata(self):
+        """
+        Returns the metadata that is passed as an input represented by this Brick as a Tensor. Note that this metadata
+        can be in any form, but it must be a singular Tensor. Note that this vector will be grouped into batches and passed
+        directly into the forward() function.
+        :return: Tensor
+        """
         pass
 
     @abstractmethod
     def get_truth(self):
+        """
+        Returns the trusth that is passed as an input represented by this Brick as a Tensor. Note that this vector will
+        be grouped into batches and directly input into the specified loss function as the truth.
+        :return: Tensor
+        """
         pass

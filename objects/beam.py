@@ -2,13 +2,15 @@ from .brick import Brick
 from typing import Iterable
 from abc import abstractmethod
 from utils.config import Config
+from ._session import session
 import json
 import stringcase
+import numpy as np
 
 
 class Beam:
     def __init__(self, brick_class, json_dict: dict=None, datastring: str='', filepath: str='', config: Config=None,
-                 demo: bool=False):
+                 demo: bool=False, fps: int=30):
         """
         A data structure that encapsulates a video of training data.
         Order of loading is <json_dict> => <datastring> => <filepath>.
@@ -25,6 +27,7 @@ class Beam:
         self.bricks = []
         self.name, self.id, self.filepath, self.source_path, = '', '', '', ''
         self.source_json_path, self.hdf5_path, self.dataset_id = '', '', ''
+        self.fps = fps
         self._deserialize(json_dict=json_dict, datastring=datastring, filepath=filepath)
 
     def _serialize(self, filepath: str='', to_file=True):
@@ -114,6 +117,40 @@ class Beam:
         filter_by_internal = (lambda brick: brick.valid and filter_by(brick)) if exclude_invalid else filter_by
         bricks = sorted(filter(filter_by_internal, self.bricks), key=sort_by)
         return list(filter_posthook(list(bricks)))
+
+    def write_data(self, vid_data):
+        """
+        Writes video data associated with this beam to a file.
+
+        :param vid_data: <np.array> an array of data to write
+        :return: None
+        """
+        if not self.hdf5_path:
+            raise FileNotFoundError('HDF5 filepath is missing')
+        if not self.dataset_id:
+            raise FileNotFoundError('Dataset ID is missing')
+        session.write_hdf5(self.hdf5_path, self.dataset_id, vid_data)
+
+    def read_data(self, frame: int, fps: int, num_frames: int):
+        """
+        Reads a block of data associated with a video.
+
+        :param frame: <int> frame associated with the first label
+        :param fps: <int> fps to read the data at
+        :param num_frames: <int> number of frames to include
+        :return:
+        """
+        if not self.hdf5_path:
+            raise FileNotFoundError('HDF5 filepath is missing')
+        if not self.dataset_id:
+            raise FileNotFoundError('Dataset ID is missing')
+        stride = self.fps // fps
+        read_frames = []
+        for i in range(num_frames):
+            num_frames_back = (i - num_frames + 1) * stride
+            frame_ind = frame - num_frames_back
+            read_frames.append(session.read_hdf5(self.hdf5_path, self.dataset_id, frame_ind, frame_ind))
+        return np.concatenate(read_frames, axis=0)
 
     def reset_bricks(self, new_bricks=None):
         new_bricks = new_bricks or []

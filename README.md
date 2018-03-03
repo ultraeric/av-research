@@ -10,13 +10,15 @@ labels, such as steering angle, acceleration, etc. Below is the high-level API f
 
 ```
 class Brick:
-|- <constructor> __init__()
-|==============================
-|- <function> serialized()
-|   Returns a representation of this Brick as a Python dictionary. Keys will be converted to CamelCase
-|==============================
-|- <function> serialize()
-|   Returns a representation of this Brick as a string in JSON format.
+|- <constructor> __init__(<string|dict>, <beam>)
+|- <static function> deserialized(<dict>) -> Brick
+|- <static function> deserializes(<string>) -> Brick
+|- <function> serialized() -> self
+|- <function> serialize() -> self
+|- <abstract property> valid() -> bool
+|- <abstract function> get_input() -> Tensor
+|- <abstract function> get_metadata() -> Tensor
+|- <abstract function> get_truth() -> Tensor
 ```
 
 # Workflow
