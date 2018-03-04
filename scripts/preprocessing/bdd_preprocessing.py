@@ -76,9 +76,9 @@ class Run:
         for frame_i in range(nframes):
             metadata = self.read_metadata(index, frame_i)
             brick = Brick({'frame': frame_i,
-                           'truth': {'steering': metadata[0],
-                                     'motor': metadata[1],
-                                     'mode': metadata[2]},
+                           'truth': {'steering': int(metadata[0]),
+                                     'motor': int(metadata[1]),
+                                     'mode': int(metadata[2])},
                            'metadata': {},
                            'rawMetadata': {}})
             curr_beam.add_brick(brick)
