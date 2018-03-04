@@ -41,14 +41,15 @@ class Run:
         return self.files[item]
 
     def read_video(self, index):
-        left_video = self.files[index]['left']
-        right_video = self.files[index]['right']
+        left_video = self.files[index][1]['left']
+        right_video = self.files[index][1]['right']
         video = np.concatenate([left_video, right_video], axis=3)
         return video
 
     def read_metadata(self, index, frame):
         #TODO: Return (steering, motor, mode) tuple
-        pass
+        metadata_file = self.files[index][2]
+        return (metadata_file['steer'][frame], metadata_file['motor'][frame], metadata_file['state'][frame])
 
     def get_brick(self, index, frame):
         steering, motor, mode = self.read_metadata(index, frame)
