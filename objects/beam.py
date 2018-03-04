@@ -18,11 +18,10 @@ class Beam:
         :param json_dict: data to initialize beam with
         :param datastring: data string to initialize beam with
         """
-        assert config or demo, 'Configuration object must be provided.'
         super().__init__()
         json_dict = json_dict or {}
         self.brick_class = brick_class
-        self.config = config
+        self.config = config or None
         self.filepath = filepath
         self.bricks = []
         self.name, self.id, self.filepath, self.source_path, = '', '', '', ''
