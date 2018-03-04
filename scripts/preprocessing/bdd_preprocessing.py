@@ -82,8 +82,8 @@ class Run:
                            'metadata': {},
                            'rawMetadata': {}})
             curr_beam.add_brick(brick)
-        curr_beam['hdf5Path'] = hdf5_path
-        curr_beam['numBricks'] = nframes
+        curr_beam.hdf5_path = hdf5_path
+        curr_beam = nframes
         curr_beam.write_data(video)
         return curr_beam
 
