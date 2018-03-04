@@ -127,7 +127,7 @@ def preprocess(raw_root='/data/dataset/bair_car_data_Main_Dataset/processed_h5py
                     if local_i % 5 == 0:
                         print('Processing video {}'.format(local_i))
 
-                    run = Run(run, dataset_root)
+                    run = Run(run, os.path.join(dataset_root, 'beams'))
                     hdf5_path = self.hdf5_filepaths[self_i]
                     for i in range(len(run)):
                         curr_beam = run.get_beam(i, local_i, hdf5_path)
