@@ -12,8 +12,8 @@ from hashlib import sha256
 
 num_threads = 12
 files_per_thread = 8
-video_file_name = ''
-metadata_file_name = ''
+video_file_name = 'images.h5py'
+metadata_file_name = 'metadata.h5py'
 
 class Run:
     def __init__(self, dir='', dest_dir=''):
