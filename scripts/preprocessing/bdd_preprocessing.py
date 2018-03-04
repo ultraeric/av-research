@@ -1,6 +1,4 @@
-import imageio
 import os
-import json
 import queue
 import traceback
 import numpy as np
