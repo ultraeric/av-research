@@ -52,6 +52,10 @@ class Run:
         with File(self.files[index][2]) as file:
             return (file['steer'][frame], file['motor'][frame], file['state'][frame])
 
+    def get_nframes(self, index):
+        with File(self.files[index][1]) as file:
+            return file['left'].shape[0]
+
     def get_brick(self, index, frame):
         steering, motor, mode = self.read_metadata(index, frame)
         brick = Brick(json_dict={'frame': frame,
@@ -64,7 +68,7 @@ class Run:
         curr_file = self.files[index]
         beam_name = sha256((curr_file[0] + str(local_i)).encode('utf-8')).hexdigest()
         beam_id = sha256(beam_name.encode('utf-8')).hexdigest()
-        nframes = curr_file[1]['left'].shape[0]
+        nframes = self.get_nframes(index)
         beam_dict = {'name': beam_name,
                      'id': beam_id,
                      'datasetId': beam_id,
