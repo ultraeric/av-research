@@ -60,8 +60,8 @@ class Run:
 
     def get_beam(self, index, local_i, hdf5_path):
         curr_file = self.files[index]
-        beam_name = sha256(curr_file[0] + str(index))
-        beam_id = sha256(beam_name)
+        beam_name = sha256((curr_file[0] + str(index)).encode('utf-8')).hexdigest()
+        beam_id = sha256(beam_name.encode('utf-8')).hexdigest()
         nframes = curr_file[1]['left'].shape[0]
         beam_dict = {'name': beam_name,
                      'id': beam_id,
