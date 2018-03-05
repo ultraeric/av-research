@@ -27,6 +27,7 @@ class Beam:
         self.name, self.id, self.filepath, self.source_path, = '', '', '', ''
         self.source_json_path, self.hdf5_path, self.dataset_id = '', '', ''
         self.fps = fps
+        self.metadata = {}
         self._deserialize(json_dict=json_dict, datastring=datastring, filepath=filepath)
 
     def _serialize(self, filepath: str='', to_file=True):

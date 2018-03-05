@@ -75,6 +75,9 @@ class Run:
                      'filepath': os.path.join(self.dest_dir, str(local_i) + '.beam'),
                      'numFrames': nframes,
                      'fps': 30,
+                     'metadata': {
+                         'runLabels': self.run_labels
+                     }
                      }
         curr_beam = Beam(Brick, json_dict=beam_dict)
         video = self.read_video(index)

@@ -36,6 +36,7 @@ class E2EBrick(Brick):
         return validity
 
     def get_input(self):
+        input_data = self.beam.read_data(self.frame)
         input_data = session.read_hdf5(filepath=self.beam.hdf5_path,
                                        dataset_id=self.beam.dataset_id,
                                        start_frame=self.frame - self.beam.config['constants']['runningFps'] + 1,
