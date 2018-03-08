@@ -5,7 +5,7 @@
       "pyPath": "nets.tasks.e2e"
     },
     "dataset": {
-      "dirPath": "/data/datasets/processed/beams"
+      "dirPath": "/data/dataset/bair_car_data_Main_Dataset/public_dataset/beams"
     },
     "pyPath": "tasks.e2e"
   }

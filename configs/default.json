@@ -21,9 +21,6 @@
     "outputFrames": 5,
 
     "tasks": {
-      "e2c": {
-        "frequency": 0.25
-      },
       "e2e": {
         "frequency": 1
       }
