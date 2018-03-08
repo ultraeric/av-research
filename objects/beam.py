@@ -24,11 +24,18 @@ class Beam:
         self.config = config or None
         self.filepath = filepath
         self.bricks = []
+        self.valid_bricks = []
         self.name, self.id, self.filepath, self.source_path, = '', '', '', ''
         self.source_json_path, self.hdf5_path, self.dataset_id = '', '', ''
         self.fps = fps
         self.metadata = {}
         self._deserialize(json_dict=json_dict, datastring=datastring, filepath=filepath)
+
+    def __len__(self):
+        return len(self.valid_bricks)
+
+    def __getitem__(self, item):
+        return self.valid_bricks[item]
 
     def _serialize(self, filepath: str='', to_file=True):
         """
@@ -70,7 +77,7 @@ class Beam:
         self_dict = vars(self)
         for key, value in json_dict.items():
             if key == 'bricks':
-                self_dict[key] = [self.brick_class(json_dict=subdict, beam=self) for subdict in value]
+                self_dict[key] = [self.brick_class(json_dict=value[i], beam=self, index=i) for i in range(len(value))]
             else:
                 self_dict[stringcase.snakecase(key)] = value
 
@@ -106,6 +113,7 @@ class Beam:
         :return: None
         """
         self.bricks.append(brick)
+        brick.index = len(self.bricks) - 1
         brick.beam = self
 
     def get_bricks(self,
@@ -116,7 +124,8 @@ class Beam:
         # print(self.bricks)
         filter_by_internal = (lambda brick: brick.valid and filter_by(brick)) if exclude_invalid else filter_by
         bricks = sorted(filter(filter_by_internal, self.bricks), key=sort_by)
-        return list(filter_posthook(list(bricks)))
+        self.valid_bricks = list(filter_posthook(list(bricks)))
+        return list(self.valid_bricks)
 
     def write_data(self, vid_data):
         """
@@ -148,7 +157,7 @@ class Beam:
         read_frames = []
         for i in range(num_frames):
             num_frames_back = (i - num_frames + 1) * stride
-            frame_ind = frame - num_frames_back
+            frame_ind = frame + num_frames_back
             read_frames.append(session.read_hdf5(self.hdf5_path, self.dataset_id, frame_ind, frame_ind))
         return np.concatenate(read_frames, axis=0)
 
@@ -158,6 +167,23 @@ class Beam:
 
     def is_valid(self) -> bool:
         return self.valid
+
+    def forward_brick_validity(self, frame: int, fps: int, num_frames: int) -> bool:
+        stride = self.fps // fps
+        return frame - ((num_frames - 1) * stride) >= 0
+
+    def backward_brick_validity(self, frame: int, fps: int, num_frames: int) -> bool:
+        stride = self.fps // fps
+        return frame + ((num_frames - 1) * stride) < len(self.bricks)
+
+    def get_forward_bricks(self, frame: int, fps: int, num_frames: int) -> bool:
+        stride = self.fps // fps
+        forward_bricks = []
+        for i in range(1, num_frames):
+            num_frames_forward = i * stride
+            frame_ind = frame + num_frames_forward
+            forward_bricks.append(self.bricks[frame_ind])
+        return forward_bricks
 
     @property
     @abstractmethod

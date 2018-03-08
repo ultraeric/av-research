@@ -13,13 +13,12 @@ from nets.tasks.e2e import E2ENet
 class E2EBeam(Beam):
     def __init__(self, *args, **kwargs):
         self.timestamp = ''
-        self.duration, self.fps, self.num_bricks, self.num_frames = 0, 0, 0, 0
-        self.resolution = [0, 0]
+        self.fps= 0
         super().__init__(E2EBrick, *args, **kwargs)
 
     @property
     def valid(self) -> bool:
-        return abs(self.beam.config['constants']['runningFps'] - self.fps) / self.beam.config['constants']['runningFps'] < 0.1
+        return True
 
 
 class E2EBrick(Brick):
@@ -28,41 +27,31 @@ class E2EBrick(Brick):
 
     @property
     def valid(self) -> bool:
-        steering, accel = self.truth['steering'], self.truth['accel']
-        if steering is None or accel is None:
-            validity = False
-        else:
-            validity = -90. <= steering <= 90. and -20. <= accel <= 20.
-        return validity
+        return self.beam.backward_brick_validity(self.frame,
+                                                 fps=self.beam.config['training']['inputFPS'],
+                                                 num_frames=self.beam.config['training']['inputFrames']) and \
+               self.beam.forward_brick_validity(self.frame,
+                                                 fps=self.beam.config['training']['outputFPS'],
+                                                 num_frames=self.beam.config['training']['outputFrames'])
 
     def get_input(self):
-        input_data = self.beam.read_data(self.frame)
-        input_data = session.read_hdf5(filepath=self.beam.hdf5_path,
-                                       dataset_id=self.beam.dataset_id,
-                                       start_frame=self.frame - self.beam.config['constants']['runningFps'] + 1,
-                                       end_frame=self.frame + 1)
+        input_data = self.beam.read_data(self.frame,
+                                         fps=self.beam.config['training']['inputFPS'],
+                                         num_frames=self.beam.config['training']['inputFrames'])
         return torch.FloatTensor(input_data)
 
     def get_metadata(self):
-        rand_state = random.getstate()
-        random.seed()
-
-        action = random.choice(self.metadata['actions'])
-        steering_meta = -1
-
-        if 'rightTurn' == action:
-            steering_meta = 1
-        elif 'leftTurn' == action:
-            steering_meta = 2
-        elif 'None' == action:
-            steering_meta = 0
-
-        random.setstate(rand_state)
-        return torch.LongTensor(np.array([steering_meta]))
+        return torch.LongTensor(np.array([0]))
 
     def get_truth(self):
-        steering, accel, motor = self.truth['steering'], self.truth['accel'], self.truth['motor']
-        return torch.FloatTensor(np.array([steering, accel, motor]))
+        steering, motor = self.truth['steering'], self.truth['motor']
+        truth_arr = [steering, motor]
+        forward_bricks = self.beam.get_forward_bricks(self.frame,
+                                                         fps=self.beam.config['training']['inputFPS'],
+                                                         num_frames=self.beam.config['training']['inputFrames'])
+        for brick in forward_bricks:
+            truth_arr.extend([brick.truth['steering'], brick.truth['motor']])
+        return torch.FloatTensor(np.array(truth_arr))
 
 
 class E2EDataset(Dataset):
@@ -73,9 +62,8 @@ class E2EDataset(Dataset):
     def _normalize_bricks(self, train_bricks=None):
         train_bricks = train_bricks or self.train_bricks
         steering = np.array([brick.truth['steering'] for brick in train_bricks])
-        accel = np.array([brick.truth['accel'] for brick in train_bricks])
         motor = np.array([brick.truth['motor'] for brick in train_bricks])
-        return np.array([np.std(steering), np.std(accel), np.std(motor)])
+        return np.array([np.std(steering), np.std(motor)])
 
     def get_posthook(self, input, metadata, truth):
         return input, metadata, truth / self._stds
@@ -84,7 +72,6 @@ class E2EDataset(Dataset):
         beam = E2EBeam(filepath=filepath, config=self.config)
         bricks = beam.get_bricks(exclude_invalid=True,
                                  sort_by=lambda brick: brick.frame,
-                                 filter_by=lambda brick: (brick.frame >= beam.config['constants']['inputFrames']),
                                  filter_posthook=lambda bricks: bricks[:-1])
         return bricks
 

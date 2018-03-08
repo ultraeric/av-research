@@ -14,6 +14,12 @@
     "subsampleRatio": 0.25,
     "numWorkers": 3,
     "batchSize": 24,
+
+    "inputFPS": 5,
+    "inputFrames": 5,
+    "outputFPS": 5,
+    "outputFrames": 5,
+
     "tasks": {
       "e2c": {
         "frequency": 0.25

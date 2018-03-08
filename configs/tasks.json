@@ -9,14 +9,4 @@
     },
     "pyPath": "tasks.e2e"
   },
-  "e2c": {
-    "name": "e2c",
-    "model": {
-      "pyPath": "nets.tasks.e2c"
-    },
-    "dataset": {
-      "dirPath": "/data/datasets/processed/beams"
-    },
-    "pyPath": "tasks.e2c"
-  }
 }

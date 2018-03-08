@@ -4,7 +4,7 @@ from abc import abstractmethod
 
 
 class Brick:
-    def __init__(self, json_dict: dict=None, datastring: str='', beam =None):
+    def __init__(self, json_dict: dict=None, datastring: str='', beam=None, index=0):
         """
         A data structure that encapsulates a trainable moment
 
@@ -21,6 +21,7 @@ class Brick:
         elif datastring:
             self._populate_datas(datastring)
         self.beam = beam
+        self.index = index
 
     def _populate_datad(self, json_dict: dict):
         """

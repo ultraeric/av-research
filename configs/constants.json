@@ -1,6 +1,4 @@
 {
-  "inputFrames": 5,
-  "runningFps": 5,
   "metadataDim": 16,
   "embeddingDim": 128
 }
