@@ -8,5 +8,5 @@
       "dirPath": "/data/datasets/processed/beams"
     },
     "pyPath": "tasks.e2e"
-  },
+  }
 }
