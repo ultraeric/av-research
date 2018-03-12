@@ -1,4 +1,7 @@
-import json
+try:
+    import ujson as json
+except:
+    import json
 from utils.cl_options import ARGS
 
 

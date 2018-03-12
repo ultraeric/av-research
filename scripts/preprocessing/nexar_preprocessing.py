@@ -1,6 +1,9 @@
 import imageio
 import os
-import json
+try:
+    import ujson as json
+except:
+    import json
 import queue
 import traceback
 from utils import *

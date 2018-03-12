@@ -3,7 +3,10 @@ from typing import Iterable
 from abc import abstractmethod
 from utils.config import Config
 from ._session import session
-import json
+try:
+    import ujson as json
+except:
+    import json
 import stringcase
 import numpy as np
 
@@ -118,7 +121,7 @@ class Beam:
 
     def get_bricks(self,
                    exclude_invalid=True,
-                   sort_by=lambda b: b,
+                   sort_by=lambda b: b.index,
                    filter_by=lambda b: True,
                    filter_posthook=lambda bs: bs) -> Iterable[Brick]:
         # print(self.bricks)
@@ -158,7 +161,8 @@ class Beam:
         for i in range(num_frames):
             num_frames_back = (i - num_frames + 1) * stride
             frame_ind = frame + num_frames_back
-            read_frames.append(session.read_hdf5(self.hdf5_path, self.dataset_id, frame_ind, frame_ind))
+            read_frames.append(session.read_hdf5(self.hdf5_path, self.dataset_id, frame_ind, frame_ind+1))
+
         return np.concatenate(read_frames, axis=0)
 
     def reset_bricks(self, new_bricks=None):

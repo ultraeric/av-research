@@ -1,4 +1,7 @@
-import json
+try:
+    import ujson as json
+except:
+    import json
 import stringcase
 from abc import abstractmethod
 

@@ -1,4 +1,7 @@
-import json
+try:
+    import ujson as json
+except:
+    import json
 import os
 from os.path import expanduser
 from objects import *
