@@ -3,6 +3,8 @@ import torch
 import torch.nn.init as init
 from utils.config import Config
 from nets.subnets.module import Module
+from torch.autograd import Variable
+import nets.models.frfcn as frfcn
 
 activation = nn.ELU
 
@@ -10,26 +12,16 @@ activation = nn.ELU
 class E2ENet(Module):
     def __init__(self, config: Config):
         super().__init__()
+        self.config = config
         self.embedding_dim = config['constants']['embeddingDim']
-
+        self.decoder = nn.LSTM(1, 64, 1, batch_first=True)
         self.embedding_interp = nn.Sequential(
             nn.BatchNorm1d(self.embedding_dim),
-            nn.Linear(self.embedding_dim, 128),
+            nn.Linear(self.embedding_dim, 24),
             activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 128),
-            activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Dropout(0.4),
-            nn.Linear(128, 128),
-            activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 128),
-            activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 128),
-            activation(inplace=True),
-            nn.Linear(128, 3)
+            nn.BatchNorm1d(24),
+            nn.Linear(24, 2),
+            nn.Sigmoid()
         )
 
         for mod in self.modules():
@@ -42,7 +34,23 @@ class E2ENet(Module):
                     init.normal(mod.weight.data)
 
     def forward(self, embedding):
-        return self.embedding_interp(embedding)
+        batch_size = embedding[0].size(0)
+        input, (h0, c0) = self.decoder(self.get_decoder_inputs(batch_size), embedding)
+        input = input.contiguous().view(batch_size * self.config['training']['outputFrames'], -1)
+        return self.embedding_interp(input).contiguous().view(batch_size, -1, 2)
 
+    def get_decoder_inputs(self, batch_size=1):
+        return Variable(torch.zeros([batch_size, self.config['training']['outputFrames'], 1]))
+
+
+def unit_test():
+    test_config = {'training': {'inputFrames': 5, 'outputFrames': 5}, 'constants': {'metadataDim': 16, 'embeddingDim': 64}}
+    input = frfcn.unit_test(test_config)
+    test_net = E2ENet(test_config)
+    test_net(input)
+
+
+unit_test()
 
 Net = E2ENet
+

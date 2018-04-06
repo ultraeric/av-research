@@ -64,17 +64,16 @@ class SqueezeSubmodule(nn.Module):
         """
         super().__init__()
         self.conv_net = nn.Sequential(
-            fire_func(32, 32, groups=2),
-            fire_func(32, 48, groups=2),
-            fire_func(48, 48, groups=3),
+            fire_func(16, 16, groups=2),
+            fire_func(16, 24, groups=2),
             pool_func(kernel_size=3, stride=2, ceil_mode=True),
+            fire_func(24, 32, groups=2),
+            fire_func(32, 32, groups=2),
+            pool_func(kernel_size=3, stride=2, ceil_mode=True),
+            fire_func(32, 48, groups=2),
+            fire_func(48, 48, groups=2),
             fire_func(48, 64, groups=2),
             fire_func(64, 64, groups=2),
-            fire_func(64, 96, groups=2),
-            fire_func(96, 96, groups=3),
-            pool_func(kernel_size=3, stride=2, ceil_mode=True),
-            fire_func(96, 128, groups=2),
-            fire_func(128, 128, groups=2),
         )
 
         for mod in self.modules():

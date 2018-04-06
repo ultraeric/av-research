@@ -12,8 +12,6 @@ from nets.tasks.e2e import E2ENet
 
 class E2EBeam(Beam):
     def __init__(self, *args, **kwargs):
-        self.timestamp = ''
-        self.fps= 0
         super().__init__(E2EBrick, *args, **kwargs)
 
     @property

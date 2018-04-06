@@ -28,52 +28,50 @@ class SqueezeNetTimeLSTM(subnets.Module):
         """Sets up layers"""
         super().__init__()
 
-        self.input_frames = config['constants']['inputFrames']
+        self.input_frames = config['training']['inputFrames']
         self.metadata_dim = config['constants']['metadataDim']
         self.embedding_dim = config['constants']['embeddingDim']
 
         self.pre_squeeze = nn.Sequential(
-            nn.Conv2d(3, 12, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(6, 12, kernel_size=3, stride=1, padding=1),
             activation(inplace=True),
             nn.BatchNorm2d(12),
             nn.Conv2d(12, 16, kernel_size=3, stride=1, padding=1),
             activation(inplace=True),
             nn.BatchNorm2d(16),
-            nn.Conv2d(16, 24, kernel_size=3, stride=2),
+            nn.Conv2d(16, 16, kernel_size=3, stride=2),
             activation(inplace=True),
-            nn.BatchNorm2d(24),
-            nn.Conv2d(24, 32, kernel_size=3, stride=2),
-            activation(inplace=True),
-            nn.BatchNorm2d(32),
+            nn.BatchNorm2d(16),
+            nn.AvgPool2d(kernel_size=3, stride=2),
             nn.Dropout2d(0.2)
         )
         self.squeeze_submodule = subnets.SqueezeSubmodule(fire_func=Fire, pool_func=pool_func)
         self.post_squeeze = nn.Sequential(
-            nn.BatchNorm2d(128),
-            nn.Conv2d(128, 96, kernel_size=3, stride=2, padding=1),
-            activation(inplace=True),
-            nn.Conv2d(96, 64, kernel_size=3, stride=2, padding=0, groups=2),
-            activation(inplace=True),
             nn.BatchNorm2d(64),
-            nn.Conv2d(64, 48, kernel_size=2, stride=2, padding=0),
+            nn.Conv2d(64, 32, kernel_size=3, stride=2, padding=1),
+            activation(inplace=True),
+            nn.Conv2d(32, 16, kernel_size=3, stride=2, padding=0, groups=1),
+            activation(inplace=True),
+            nn.BatchNorm2d(16),
+            nn.Conv2d(16, 16, kernel_size=2, stride=2, padding=1),
             activation(inplace=True),
         )
         self.lstm_encoder = nn.ModuleList([
-            nn.LSTM(96, 128, 1, batch_first=True)
+            nn.LSTM(32, 64, 1, batch_first=True)
         ])
         self.meta_embedding = subnets.Metadata(8, self.metadata_dim)
         self.post_metadata = nn.Sequential(
-            nn.Linear(128 + self.metadata_dim, 128),
+            nn.Linear(64 + self.metadata_dim, 64),
             activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, 128),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, 64),
             activation(inplace=True),
-            nn.BatchNorm1d(128),
+            nn.BatchNorm1d(64),
             nn.Dropout(0.4),
-            nn.Linear(128, 128),
+            nn.Linear(64, 64),
             activation(inplace=True),
-            nn.BatchNorm1d(128),
-            nn.Linear(128, self.embedding_dim),
+            nn.BatchNorm1d(64),
+            nn.Linear(64, self.embedding_dim),
             activation(inplace=True),
         )
 
@@ -97,13 +95,13 @@ class SqueezeNetTimeLSTM(subnets.Module):
         input = input.contiguous().view(batch_size, -1, input.size(1) * input.size(2) * input.size(3))
         for lstm in self.lstm_encoder:
             lstm_output, last_hidden_cell = lstm(input)
-            input = last_hidden_cell[0]
+            input, output = last_hidden_cell[0], last_hidden_cell[1]
         post_lstm = input.contiguous().view(input.size(1), -1)
         meta_embeddings = self.meta_embedding(meta_indices)
         meta_embeddings = meta_embeddings.contiguous().view(meta_indices.size(0), -1)
         meta_included = torch.cat([post_lstm, meta_embeddings], 1)
         input = self.post_metadata(meta_included)
-        return input
+        return input, output
 
     def num_params(self):
         num_params = 0
@@ -115,14 +113,13 @@ class SqueezeNetTimeLSTM(subnets.Module):
         return num_params
 
 
-def unit_test():
+def unit_test(test_config={}):
     """Tests SqueezeNetTimeLSTM for size constitency"""
-    test_config = {'constants': {'inputFrames': 5, 'metadataDim': 16, 'embeddingDim': 64}}
+    test_config = test_config if test_config else {'training': {'inputFrames': 5}, 'constants': {'metadataDim': 16, 'embeddingDim': 64}}
     test_net = SqueezeNetTimeLSTM(test_config)
-    test_net_output = test_net(Variable(torch.randn(2, 5, 180, 320, 3)),
-                               Variable(torch.LongTensor([[1], [2]])))
-    print(test_net_output.size())
-    print(test_net.num_params())
+    test_net_output = test_net(Variable(torch.randn(7, 5, 94, 168, 6)),
+                               Variable(torch.LongTensor([[1], [2], [3], [4], [5], [6], [7]])))
+    return test_net_output
 
 
 unit_test()

@@ -1,4 +1,4 @@
 {
   "metadataDim": 16,
-  "embeddingDim": 128
+  "embeddingDim": 64
 }

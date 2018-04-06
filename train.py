@@ -56,8 +56,8 @@ def iterate(net, task, optimizer=None, input=None, truth=None, train=True, i=-1)
 
     input = tuple([tensor if isinstance(tensor, torch.FloatTensor) else tensor for tensor in input])
     input = tuple([Variable(tensor).cuda() for tensor in input])
-    embeddings = net(*input).cuda()
-    outputs = task.net(embeddings).cuda()
+    embeddings = net(*input)
+    outputs = task.net(embeddings)
     truth = Variable(truth).cuda()
     loss = task.loss_func(outputs, truth)
 

@@ -143,6 +143,10 @@ class Beam:
             raise FileNotFoundError('Dataset ID is missing')
         session.write_hdf5(self.hdf5_path, self.dataset_id, vid_data)
 
+    def append_data(self):
+        # TODO: Implement data appending
+        pass
+
     def read_data(self, frame: int, fps: int, num_frames: int):
         """
         Reads a block of data associated with a video.
