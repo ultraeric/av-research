@@ -38,7 +38,7 @@
 
   "model": {
     "name": "squeezefcn",
-    "pyPath": "nets.models.squeezefcn",
+    "pyPath": "nets.models.frfcn",
     "saveDirPath": "./save/"
   }
 }
