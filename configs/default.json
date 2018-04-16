@@ -6,13 +6,13 @@
   },
 
   "training": {
-    "startEpoch": 71,
+    "startEpoch": 0,
     "numEpochs": 150,
     "learningRate": null,
     "seed": 123123123,
     "trainRatio": 0.8,
     "subsampleRatio": 0.25,
-    "numWorkers": 3,
+    "numWorkers": 1,
     "batchSize": 24,
 
     "inputFPS": 5,
@@ -37,7 +37,7 @@
   },
 
   "model": {
-    "name": "squeezefcn",
+    "name": "frfcn",
     "pyPath": "nets.models.frfcn",
     "saveDirPath": "./save/"
   }

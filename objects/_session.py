@@ -1,5 +1,6 @@
 import multiprocessing as mp
 import h5py
+import h5py_cache as h5c
 
 
 class _Session:
@@ -35,8 +36,8 @@ class _Session:
         """
         hdf5_lock = self.add_hdf5(filepath)
         with hdf5_lock:
-            h5py_file = h5py.File(filepath, 'a', libver='latest')
-            h5py_file.create_dataset(dataset_id, data=vid_data, compression='gzip')
+            h5py_file = h5c.File(filepath, 'a', libver='latest', chunk_cache_mem_size=(1024**2)*16)
+            h5py_file.create_dataset(dataset_id, data=vid_data, dtype='uint8')
             h5py_file.close()
 
     def read_hdf5(self, filepath, dataset_id, start_frame, end_frame):
@@ -51,7 +52,7 @@ class _Session:
         """
         hdf5_lock = self.add_hdf5(filepath)
         with hdf5_lock:
-            h5py_file = h5py.File(filepath, 'r', libver='latest')
+            h5py_file = h5c.File(filepath, 'r', libver='latest', chunk_cache_mem_size=(1024**2)*16)
             dataset = h5py_file[dataset_id]
             return dataset[start_frame: end_frame]
 

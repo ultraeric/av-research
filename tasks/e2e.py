@@ -64,7 +64,7 @@ class E2EDataset(Dataset):
         return np.array([np.std(steering), np.std(motor)])
 
     def get_posthook(self, input, metadata, truth):
-        return input, metadata, truth / self._stds
+        return input, metadata, truth / self._stds.repeat(self.config['training']['outputFrames'])
 
     def load_beam(self, filepath: str) -> Iterable[Brick]:
         beam = E2EBeam(filepath=filepath, config=self.config)

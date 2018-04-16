@@ -83,7 +83,7 @@ class Dataset(data.Dataset):
                 train_bricks.extend(bricks)
             else:
                 val_bricks.extend(bricks)
-            console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5./3.)
+            console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
         console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=0.)
 
         random.seed()

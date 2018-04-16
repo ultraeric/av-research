@@ -37,7 +37,7 @@ class E2ENet(Module):
         embedding = [embedding[0], embedding[1]]
         batch_size = embedding[0].size(0)
         embedding[0] = embedding[0].view([1, embedding[0].size(0), embedding[0].size(1)])
-        input, (h0, c0) = self.decoder(self.get_decoder_inputs(batch_size), embedding)
+        input, (h0, c0) = self.decoder(self.get_decoder_inputs(batch_size).cuda(), embedding)
         input = input.contiguous().view(batch_size * self.config['training']['outputFrames'], -1)
         return self.embedding_interp(input).contiguous().view(batch_size, -1, 2)
 
@@ -52,7 +52,7 @@ def unit_test():
     test_net(input)
 
 
-unit_test()
+#unit_test()
 
 Net = E2ENet
 

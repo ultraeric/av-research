@@ -29,7 +29,7 @@ def print_outputs(arr):
     if type(arr) != list and type(arr) != tuple:
         print(arr)
     else:
-        str_list = ['{0:.3f}'.format(_) for _ in arr]
+        str_list = ['{}'.format(_) for _ in arr]
         print(', '.join(str_list))
 
 

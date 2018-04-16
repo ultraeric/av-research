@@ -11,10 +11,8 @@
     "learningRate": null,
     "seed": 123123123,
     "trainRatio": 0.8,
-    "subsampleRatio": 0.25,
-    "numWorkers": 3,
-    "batchSize": 24
-  },
+    "subsampleRatio": 0.25
+},
 
   "demo": {
     "epoch": 80
