@@ -11,12 +11,12 @@
     "learningRate": null,
     "seed": 123123123,
     "trainRatio": 0.8,
-    "subsampleRatio": 0.25,
+    "subsampleRatio": 1.,
     "numWorkers": 1,
-    "batchSize": 24,
+    "batchSize": 64,
 
     "inputFPS": 5,
-    "inputFrames": 5,
+    "inputFrames": 10,
     "outputFPS": 5,
     "outputFrames": 5,
 

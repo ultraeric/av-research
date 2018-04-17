@@ -54,6 +54,7 @@ class _Session:
         with hdf5_lock:
             h5py_file = h5c.File(filepath, 'r', libver='latest', chunk_cache_mem_size=(1024**2)*16)
             dataset = h5py_file[dataset_id]
+            print(start_frame, end_frame)
             return dataset[start_frame: end_frame]
 
 

@@ -54,7 +54,7 @@ class Beam:
 
         dict_repr = self.serialized()
         if to_file:
-            with gzip.open(filepath, mode='wt') as f:
+            with open(filepath, mode='w+') as f:
                 json.dump(dict_repr, f)
             return None
         else:
@@ -75,7 +75,7 @@ class Beam:
             if datastring:
                 json_dict = json.loads(datastring)
             else:
-                with gzip.open(filepath, mode='rt') as f:
+                with open(filepath, mode='r+') as f:
                     json_dict = json.load(f)
 
         self_dict = vars(self)

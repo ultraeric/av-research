@@ -17,7 +17,8 @@ def should_keep(p_keep=1.):
     return random.random() <= p_keep
 
 
-def f(ref, filepath):
+def f(pack):
+    ref, filepath = pack[0], pack[1]
     bricks = ref.load_beam(filepath=filepath)
     if should_keep(p_keep=ref._training['trainRatio']):
         train_bricks = bricks
@@ -87,22 +88,23 @@ class Dataset(data.Dataset):
         beam_filepaths = []
         for dirpath in dirpaths:
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
+        #ref = self
+        #pool = mp.Pool()
+        #fps = [(self, fp) for fp in beam_filepaths]
+        #train_bricks, val_bricks = pool.map(f, fps)
+        #train_bricks, val_bricks = list(itertools.chain.from_iterable(train_bricks)), \
+        #                           list(itertools.chain.from_iterable(val_bricks))
 
-        ref = self
+        train_bricks, val_bricks = [], []
 
-        pool = mp.Pool()
-        train_bricks, val_bricks = pool.map(f, [(self, fp) for fp in beam_filepaths])
-        train_bricks, val_bricks = list(itertools.chain.from_iterable(train_bricks)), \
-                                   list(itertools.chain.from_iterable(val_bricks))
-
-        # for i, (filepath) in enumerate(beam_filepaths):
-        #     bricks = self.load_beam(filepath=filepath)
-        #     if should_keep(p_keep=self._training['trainRatio']):
-        #         train_bricks.extend(bricks)
-        #     else:
-        #         val_bricks.extend(bricks)
-        #     console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
-        # console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=0.)
+        for i, (filepath) in enumerate(beam_filepaths):
+            bricks = self.load_beam(filepath=filepath)
+            if should_keep(p_keep=self._training['trainRatio']):
+                train_bricks.extend(bricks)
+            else:
+                val_bricks.extend(bricks)
+            console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
+        console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=0.)
 
         random.seed()
         return train_bricks, val_bricks

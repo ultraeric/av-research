@@ -45,8 +45,8 @@ class E2EBrick(Brick):
         steering, motor = self.truth['steering'], self.truth['motor']
         truth_arr = [steering, motor]
         forward_bricks = self.beam.get_forward_bricks(self.frame,
-                                                         fps=self.beam.config['training']['inputFPS'],
-                                                         num_frames=self.beam.config['training']['inputFrames'])
+                                                         fps=self.beam.config['training']['outputFPS'],
+                                                         num_frames=self.beam.config['training']['outputFrames'])
         for brick in forward_bricks:
             truth_arr.extend([brick.truth['steering'], brick.truth['motor']])
         return torch.FloatTensor(np.array(truth_arr))
