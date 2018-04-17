@@ -17,9 +17,9 @@ def should_keep(p_keep=1.):
     return random.random() <= p_keep
 
 
-def f(self, filepath):
-    bricks = self.load_beam(filepath=filepath)
-    if should_keep(p_keep=self._training['trainRatio']):
+def f(ref, filepath):
+    bricks = ref.load_beam(filepath=filepath)
+    if should_keep(p_keep=ref._training['trainRatio']):
         train_bricks = bricks
         val_bricks = []
     else:
