@@ -17,6 +17,17 @@ def should_keep(p_keep=1.):
     return random.random() <= p_keep
 
 
+def f(self, filepath):
+    bricks = self.load_beam(filepath=filepath)
+    if should_keep(p_keep=self._training['trainRatio']):
+        train_bricks = bricks
+        val_bricks = []
+    else:
+        train_bricks = []
+        val_bricks = bricks
+    return train_bricks, val_bricks
+
+
 class Dataset(data.Dataset):
     def __init__(self,
                  config: Config,
@@ -78,15 +89,6 @@ class Dataset(data.Dataset):
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
 
         ref = self
-        def f(self, filepath):
-            bricks = self.load_beam(filepath=filepath)
-            if should_keep(p_keep=self._training['trainRatio']):
-                train_bricks = bricks
-                val_bricks = []
-            else:
-                train_bricks = []
-                val_bricks = bricks
-            return train_bricks, val_bricks
 
         pool = mp.Pool()
         train_bricks, val_bricks = pool.map(f, [(self, fp) for fp in beam_filepaths])
