@@ -3,6 +3,7 @@ from typing import Iterable
 from abc import abstractmethod
 from utils.config import Config
 from ._session import session
+import gzip
 try:
     import ujson as json
 except:
@@ -53,7 +54,7 @@ class Beam:
 
         dict_repr = self.serialized()
         if to_file:
-            with open(filepath, 'w+') as f:
+            with gzip.open(filepath, mode='wt') as f:
                 json.dump(dict_repr, f)
             return None
         else:
@@ -74,7 +75,7 @@ class Beam:
             if datastring:
                 json_dict = json.loads(datastring)
             else:
-                with open(filepath, 'r') as f:
+                with gzip.open(filepath, mode='rt') as f:
                     json_dict = json.load(f)
 
         self_dict = vars(self)
