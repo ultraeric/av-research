@@ -78,8 +78,8 @@ class Dataset(data.Dataset):
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
 
         ref = self
-        def f(filepath):
-            bricks = ref.load_beam(filepath=filepath)
+        def f(self, filepath):
+            bricks = self.load_beam(filepath=filepath)
             if should_keep(p_keep=self._training['trainRatio']):
                 train_bricks = bricks
                 val_bricks = []
@@ -89,7 +89,7 @@ class Dataset(data.Dataset):
             return train_bricks, val_bricks
 
         pool = mp.Pool()
-        train_bricks, val_bricks = pool.map(f, beam_filepaths)
+        train_bricks, val_bricks = pool.map(f, [(self, fp) for fp in beam_filepaths])
         train_bricks, val_bricks = list(itertools.chain.from_iterable(train_bricks)), \
                                    list(itertools.chain.from_iterable(val_bricks))
 
