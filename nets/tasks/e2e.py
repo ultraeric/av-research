@@ -20,8 +20,14 @@ class E2ENet(Module):
             nn.Linear(self.embedding_dim, 24),
             activation(inplace=True),
             nn.BatchNorm1d(24),
+            nn.Linear(24, 24),
+            activation(inplace=True),
+            nn.BatchNorm1d(24),
+            nn.Linear(24, 24),
+            activation(inplace=True),
+            nn.Linear(24, 24),
+            activation(inplace=True),
             nn.Linear(24, 2),
-            nn.Sigmoid()
         )
 
         for mod in self.modules():
