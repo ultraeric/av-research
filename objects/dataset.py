@@ -77,8 +77,9 @@ class Dataset(data.Dataset):
         for dirpath in dirpaths:
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
 
+        ref = self
         def f(filepath):
-            bricks = self.load_beam(filepath=filepath)
+            bricks = ref.load_beam(filepath=filepath)
             if should_keep(p_keep=self._training['trainRatio']):
                 train_bricks = bricks
                 val_bricks = []
