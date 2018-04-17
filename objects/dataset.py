@@ -1,9 +1,10 @@
 import torch
 import torch.utils.data as data
 import torch.utils.data.sampler as sampler
-import random
+import itertools
 from typing import Iterable
 from abc import abstractmethod
+import multiprocessing as mp
 from .beam import *
 from utils.logging import *
 from utils.video import *
@@ -75,16 +76,30 @@ class Dataset(data.Dataset):
         beam_filepaths = []
         for dirpath in dirpaths:
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
-        train_bricks, val_bricks = [], []
 
-        for i, (filepath) in enumerate(beam_filepaths):
+        def f(filepath):
             bricks = self.load_beam(filepath=filepath)
             if should_keep(p_keep=self._training['trainRatio']):
-                train_bricks.extend(bricks)
+                train_bricks = bricks
+                val_bricks = []
             else:
-                val_bricks.extend(bricks)
-            console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
-        console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=0.)
+                train_bricks = []
+                val_bricks = bricks
+            return train_bricks, val_bricks
+
+        pool = mp.Pool()
+        train_bricks, val_bricks = pool.map(f, beam_filepaths)
+        train_bricks, val_bricks = list(itertools.chain.from_iterable(train_bricks)), \
+                                   list(itertools.chain.from_iterable(val_bricks))
+
+        # for i, (filepath) in enumerate(beam_filepaths):
+        #     bricks = self.load_beam(filepath=filepath)
+        #     if should_keep(p_keep=self._training['trainRatio']):
+        #         train_bricks.extend(bricks)
+        #     else:
+        #         val_bricks.extend(bricks)
+        #     console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
+        # console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=0.)
 
         random.seed()
         return train_bricks, val_bricks
