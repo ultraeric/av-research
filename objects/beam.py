@@ -179,11 +179,11 @@ class Beam:
 
     def forward_brick_validity(self, frame: int, fps: int, num_frames: int) -> bool:
         stride = self.fps // fps
-        return frame - ((num_frames - 1) * stride) >= 0
+        return frame + ((num_frames - 1) * stride) < len(self.bricks)
 
     def backward_brick_validity(self, frame: int, fps: int, num_frames: int) -> bool:
         stride = self.fps // fps
-        return frame + ((num_frames - 1) * stride) < len(self.bricks)
+        return frame - ((num_frames - 1) * stride) >= 0
 
     def get_forward_bricks(self, frame: int, fps: int, num_frames: int) -> bool:
         stride = self.fps // fps
