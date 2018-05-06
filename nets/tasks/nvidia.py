@@ -3,7 +3,6 @@ import torch
 import torch.nn.init as init
 from utils.config import Config
 from nets.subnets.module import Module
-from torch.autograd import Variable
 import nets.models.nvidia as nvidia
 
 activation = nn.ELU

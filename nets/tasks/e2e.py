@@ -3,7 +3,6 @@ import torch
 import torch.nn.init as init
 from utils.config import Config
 from nets.subnets.module import Module
-from torch.autograd import Variable
 import nets.models.frfcn as frfcn
 
 activation = nn.ELU
@@ -48,7 +47,7 @@ class E2ENet(Module):
         return self.embedding_interp(input).contiguous().view(batch_size, -1, 2)
 
     def get_decoder_inputs(self, batch_size=1):
-        return Variable(torch.zeros([batch_size, self.config['training']['outputFrames'], 1]))
+        return torch.zeros([batch_size, self.config['training']['outputFrames'], 1])
 
 
 def unit_test():

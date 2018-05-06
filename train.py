@@ -7,7 +7,6 @@ import torch.optim as optim
 import torch
 import utils
 from utils.logging import *
-from torch.autograd import Variable
 from objects import Dataset
 from nets.subnets.module import Module
 from objects.task import TaskManager
@@ -55,10 +54,10 @@ def iterate(net, task, optimizer=None, input=None, truth=None, train=True, i=-1)
         task.net.eval()
 
     input = tuple([tensor if isinstance(tensor, torch.FloatTensor) else tensor for tensor in input])
-    input = tuple([Variable(tensor).cuda() for tensor in input])
+    input = tuple([tensor.cuda() for tensor in input])
     embeddings = net(*input)
     outputs = task.net(embeddings)
-    truth = Variable(truth).cuda()
+    truth = truth.cuda()
     loss = task.loss_func(outputs, truth)
 
     if i % 25 == 0:

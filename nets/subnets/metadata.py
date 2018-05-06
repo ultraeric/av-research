@@ -1,7 +1,6 @@
 import torch.nn as nn
 import torch
 import torch.nn.init as init
-from torch.autograd import Variable
 
 class Metadata(nn.Module):
     """
@@ -34,5 +33,5 @@ class Metadata(nn.Module):
 
 def unit_test():
     test_net = Metadata()
-    test_net.forward(Variable(torch.LongTensor([[1], [2]])))
+    test_net.forward(torch.LongTensor([[1], [2]]))
 

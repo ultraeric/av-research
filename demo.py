@@ -3,7 +3,6 @@ import tkinter
 import imageio
 import torch
 import cv2
-from torch.autograd import Variable
 from PIL import Image, ImageTk
 from objects import *
 from utils.video import *
@@ -121,8 +120,8 @@ class Demo:
             if vid_frames is None:
                 self.controls.append((0, 0, 0))
             else:
-                metadata = torch.unsqueeze(Variable(self.get_metadata(frame_i)).cuda(), 0)
-                vid_frames = torch.unsqueeze(Variable(torch.FloatTensor(vid_frames)).cuda(), 0)
+                metadata = torch.unsqueeze(self.get_metadata(frame_i).cuda(), 0)
+                vid_frames = torch.unsqueeze(torch.FloatTensor(vid_frames).cuda(), 0)
                 embedding = self.net(vid_frames, metadata)
                 output = self.task.net(embedding).data[0]
                 controls = (output[0], output[1], output[2])
