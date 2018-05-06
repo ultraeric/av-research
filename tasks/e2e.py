@@ -69,12 +69,10 @@ class E2EDataset(Dataset):
 
     def load_beam(self, filepath: str) -> Iterable[Brick]:
         beam = E2EBeam(filepath=filepath, config=self.config)
-        if not beam.valid:
-            return []
         bricks = beam.get_bricks(exclude_invalid=True,
                                  sort_by=lambda brick: brick.frame,
                                  filter_posthook=lambda bricks: bricks[:-1])
-        return bricks
+        return bricks, beam
 
 
 class E2ETask(Task):

@@ -19,7 +19,7 @@ def should_keep(p_keep=1.):
 
 def f(pack):
     ref, filepath = pack[0], pack[1]
-    bricks = ref.load_beam(filepath=filepath)
+    bricks = ref.load_beam(filepath=filepath)[0]
     if should_keep(p_keep=ref._training['trainRatio']):
         train_bricks = bricks
         val_bricks = []
@@ -99,9 +99,12 @@ class Dataset(data.Dataset):
         train_bricks, val_bricks = [], []
 
         for i, (filepath) in enumerate(beam_filepaths):
-            bricks = self.load_beam(filepath=filepath)
+            bricks, beam = self.load_beam(filepath=filepath)
             if should_keep(p_keep=self._training['trainRatio']):
-                train_bricks.extend(bricks)
+                if beam.valid:
+                    train_bricks.extend(bricks)
+                else:
+                    continue
             else:
                 val_bricks.extend(bricks)
             console_logger.progress('Loading Beams -', i + 1, len(beam_filepaths), debounce_buffer=5)
