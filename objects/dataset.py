@@ -88,6 +88,7 @@ class Dataset(data.Dataset):
         beam_filepaths = []
         for dirpath in dirpaths:
             beam_filepaths.extend([os.path.join(dirpath, filename) for filename in os.listdir(dirpath)])
+        beam_filepaths = list(sorted(beam_filepaths))
         #ref = self
         #pool = mp.Pool()
         #fps = [(self, fp) for fp in beam_filepaths]

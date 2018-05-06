@@ -6,12 +6,12 @@
   },
 
   "training": {
-    "startEpoch": 56,
+    "startEpoch": 0,
     "numEpochs": 150,
     "learningRate": null,
     "seed": 123123123,
     "trainRatio": 0.95,
-    "subsampleRatio": 0.025,
+    "subsampleRatio": 1.,
     "numWorkers": 1,
     "batchSize": 64,
 

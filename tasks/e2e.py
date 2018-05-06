@@ -16,7 +16,7 @@ class E2EBeam(Beam):
 
     @property
     def valid(self) -> bool:
-        return True
+        return ('Tilden' in self.metadata['runLabels'] or 'campus' in self.metadata['runLabels'] or 'local' in self.metadata['runLabels']) and random.random() < 0.05
 
 
 class E2EBrick(Brick):
@@ -56,6 +56,7 @@ class E2EDataset(Dataset):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._stds = torch.FloatTensor(self._normalize_bricks(self.train_bricks))
+        print(self._stds)
 
     def _normalize_bricks(self, train_bricks=None):
         train_bricks = train_bricks or self.train_bricks
@@ -68,6 +69,8 @@ class E2EDataset(Dataset):
 
     def load_beam(self, filepath: str) -> Iterable[Brick]:
         beam = E2EBeam(filepath=filepath, config=self.config)
+        if not beam.valid:
+            return []
         bricks = beam.get_bricks(exclude_invalid=True,
                                  sort_by=lambda brick: brick.frame,
                                  filter_posthook=lambda bricks: bricks[:-1])
