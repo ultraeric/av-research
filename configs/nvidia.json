@@ -21,7 +21,7 @@
     "outputFrames": 5,
 
     "tasks": {
-      "e2e": {
+      "nvidia": {
         "frequency": 1
       }
     }
@@ -37,8 +37,8 @@
   },
 
   "model": {
-    "name": "frfcn",
-    "pyPath": "nets.models.frfcn",
+    "name": "nvidia",
+    "pyPath": "nets.models.nvidia",
     "saveDirPath": "./save/"
   }
 }

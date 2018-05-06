@@ -2,7 +2,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.init as init
-from torch.autograd import Variable
 from utils.config import Config
 import sys
 sys.path.insert(0, '../../')
@@ -117,8 +116,8 @@ def unit_test(test_config={}):
     """Tests SqueezeNetTimeLSTM for size constitency"""
     test_config = test_config if test_config else {'training': {'inputFrames': 5}, 'constants': {'metadataDim': 16, 'embeddingDim': 64}}
     test_net = SqueezeNetTimeLSTM(test_config)
-    test_net_output = test_net(Variable(torch.randn(7, 5, 94, 168, 6)),
-                               Variable(torch.LongTensor([[1], [2], [3], [4], [5], [6], [7]])))
+    test_net_output = test_net(torch.randn(7, 5, 94, 168, 6),
+                               torch.LongTensor([[1], [2], [3], [4], [5], [6], [7]]))
     return test_net_output
 
 
