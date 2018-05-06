@@ -44,7 +44,7 @@ class E2ENet(Module):
         embedding[0] = embedding[0].view([1, embedding[0].size(0), embedding[0].size(1)])
         input, (h0, c0) = self.decoder(self.get_decoder_inputs(batch_size).cuda(), embedding)
         input = input.contiguous().view(batch_size * self.config['training']['outputFrames'], -1)
-        return self.embedding_interp(input).contiguous().view(batch_size, -1, 2)
+        return self.embedding_interp(input).contiguous().view(batch_size, -1)
 
     def get_decoder_inputs(self, batch_size=1):
         return torch.zeros([batch_size, self.config['training']['outputFrames'], 1])
